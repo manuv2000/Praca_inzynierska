@@ -1,0 +1,8 @@
+[
+  {
+    "scenario": "baseline_scan_ro",
+    "attack": "scan_readonly",
+    "start_ts": 1733623393.8,
+    "end_ts": 1733623406.1
+  }
+]

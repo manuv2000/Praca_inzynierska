@@ -1,0 +1,31 @@
+global:
+  plc_host: "127.0.0.1"
+  plc_port: 502
+  unit_id: 1
+
+run:
+  - name: hmi
+    kind: hmi_master     # nowy moduł
+    duration_s: 0        # 0 = w tle bez limitu
+
+  - name: baseline       # (opcjonalnie) nasz normal generator może zostać wyłączony,
+    kind: normal         # gdy HMI odgrywa jego rolę; albo zostaw jako drugi klient
+    start_after_s: 5
+    duration_s: 0
+
+  - name: scan_ro
+    kind: scan_readonly
+    start_after_s: 60
+    duration_s: 45
+    params:
+      addr_ranges: [[0, 200]]
+      qps: 30
+
+  - name: write_attack
+    kind: write_injection
+    start_after_s: 140
+    duration_s: 20
+    params:
+      target_addr: 2
+      value: 999
+      qps: 10
