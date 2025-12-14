@@ -12,27 +12,21 @@ PCAP_DIR = BASE_DIR / "capture" / "pcap"
 PID_FILE = BASE_DIR / "capture" / ".capture_pid"
 
 DEFAULT_INTERFACE = "Adapter for loopback traffic capture"
-BPF_FILTER = "tcp port 502"
 
-# Stała ścieżka awaryjna – ustaw POD SWÓJ system
+# >>> ZMIANA: łapiemy 502 ORAZ 1502 (proxy)
+BPF_FILTER = "tcp port 502 or tcp port 1502"
+
 DUMPCAP_FIXED_PATH = r"C:\Program Files\Wireshark\dumpcap.exe"
 
 
 def _get_dumpcap_exe() -> str:
-    # 1) zmienna środowiskowa w tej sesji PowerShell
     env = os.environ.get("DUMPCAP_EXE")
     if env:
         return env
-
-    # 2) dumpcap w PATH
     if shutil.which("dumpcap"):
         return "dumpcap"
-
-    # 3) stała ścieżka
     if DUMPCAP_FIXED_PATH and Path(DUMPCAP_FIXED_PATH).exists():
         return DUMPCAP_FIXED_PATH
-
-    # 4) nic nie znaleziono
     raise RuntimeError(
         "Nie znaleziono dumpcap (ani w PATH, ani pod DUMPCAP_FIXED_PATH). "
         "Ustaw DUMPCAP_EXE lub popraw DUMPCAP_FIXED_PATH w capture_control.py."
@@ -45,9 +39,7 @@ def start_capture(
     ring_size_mb: int = 100,
     label: Optional[str] = None,
 ) -> Path:
-
     PCAP_DIR.mkdir(parents=True, exist_ok=True)
-
     ts = dt.datetime.now().strftime("cap-%Y%m%d-%H%M%S")
 
     safe_label = ""
@@ -56,7 +48,6 @@ def start_capture(
         safe_label = "_" + re.sub(r"[^A-Za-z0-9_-]", "_", label)
 
     pcap_path = PCAP_DIR / f"{ts}{safe_label}.pcapng"
-
     dumpcap_exe = _get_dumpcap_exe()
 
     cmd = [
@@ -79,22 +70,16 @@ def start_capture(
 
 
 def stop_capture() -> Optional[int]:
-
     if not PID_FILE.exists():
         return None
-
     pid_str = PID_FILE.read_text(encoding="utf-8").strip()
     if not pid_str:
         return None
 
     pid = int(pid_str)
-
     if os.name == "nt":
-        subprocess.run(
-            ["taskkill", "/PID", str(pid), "/F"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        subprocess.run(["taskkill", "/PID", str(pid), "/F"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     else:
         import signal
         os.kill(pid, signal.SIGTERM)

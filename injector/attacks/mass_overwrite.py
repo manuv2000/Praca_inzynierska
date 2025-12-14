@@ -1,4 +1,4 @@
-# injector/attacks/spoofing.py
+# injector/attacks/mass_overwrite.py
 
 import logging
 import random
