@@ -58,7 +58,12 @@ def run_hmi_loop(
                     dt = 0.0
                 elapsed = time.perf_counter() - t0
                 sleep_time = max(0.0, dt - elapsed)
-                time.sleep(sleep_time)
+
+                if stop_event is None:
+                    time.sleep(sleep_time)
+                else:
+                    stop_event.wait(timeout=sleep_time)
+
 
     except KeyboardInterrupt:
         log.info("HMI loop interrupted by user")
