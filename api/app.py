@@ -83,7 +83,7 @@ def quick_stats(pcap_name: str):
     if not p.exists():
         raise HTTPException(status_code=404, detail="pcap not found")
 
-    feats = extract_features(p)  # korzysta z Twojego decode-as/portów
+    feats = extract_features(p)
     if not feats.get("ok", False):
         return QuickStatsResponse(ok=False, file=pcap_name, path=str(p), features=feats)
 
@@ -101,12 +101,9 @@ def export_json(pcap_name: str):
 
 @app.post("/scenario/kill")
 def kill():
-    # 1) ustaw stop_event
-    # 2) ubij capture proces (tshark/dumpcap) bez czekania
     return {"ok": True}
 
 
 
 if __name__ == "__main__":
-    # Windows-friendly
     uvicorn.run(app, host="127.0.0.1", port=8000)

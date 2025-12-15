@@ -13,7 +13,6 @@ PID_FILE = BASE_DIR / "capture" / ".capture_pid"
 
 DEFAULT_INTERFACE = "Adapter for loopback traffic capture"
 
-# >>> ZMIANA: łapiemy 502 ORAZ 1502 (proxy)
 BPF_FILTER = "tcp port 502 or tcp port 1502"
 
 DUMPCAP_FIXED_PATH = r"C:\Program Files\Wireshark\dumpcap.exe"

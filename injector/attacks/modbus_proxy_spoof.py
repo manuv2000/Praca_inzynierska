@@ -36,7 +36,6 @@ def parse_mbap_frame(buf: bytearray) -> Optional[bytes]:
     length_field = _u16(buf[4:6])
     total_len = 6 + length_field
     if total_len <= 0:
-        # błąd, ucinamy 1 bajt żeby nie zawisnąć
         del buf[0:1]
         return None
     if len(buf) < total_len:
@@ -73,7 +72,6 @@ class PendingReq:
 class ConnState:
     """
     Stan per-connection: mapujemy Transaction ID -> request metadata.
-    To konieczne, bo FC3 response nie zawiera start_addr.
     """
     lock: threading.Lock = field(default_factory=threading.Lock)
     pending: Dict[int, PendingReq] = field(default_factory=dict)
@@ -81,7 +79,6 @@ class ConnState:
     def put(self, tid: int, req: PendingReq) -> None:
         with self.lock:
             self.pending[tid] = req
-            # lekki cleanup starych
             now = time.time()
             for k in list(self.pending.keys()):
                 if now - self.pending[k].ts > 5.0:
@@ -94,7 +91,6 @@ class ConnState:
 
 def should_spoof_register(cfg: PlcConfig, addr: int) -> bool:
     """
-    Tu możesz spiąć to z YAML (np. cfg.spoof_registers),
     na razie prosta wersja: spoofujemy HR[0..9] jako przykład.
     """
     # PRZYKŁAD: spoof tylko dla zakresu HMI
@@ -178,7 +174,6 @@ def maybe_spoof_response(cfg: PlcConfig, state: ConnState, frame: bytes) -> byte
 
     # długość MBAP musi być spójna: LEN = 1 + len(PDU)
     new_length = 1 + len(new_pdu)
-    # sklej ramkę
     new_frame = bytearray()
     new_frame += _p16(tid)
     new_frame += _p16(pid)
@@ -221,7 +216,6 @@ def forward_stream(
         except OSError:
             break
 
-        # wycinamy tyle ramek ile się da
         while True:
             frame = parse_mbap_frame(buf)
             if frame is None:

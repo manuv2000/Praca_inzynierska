@@ -115,7 +115,6 @@ class ScenarioRunner:
                 details["proxy"] = {"host": cfg_real.proxy_host, "port": cfg_real.proxy_port}
 
             else:
-                # jeśli nie znamy scenariusza -> stop capture i błąd
                 stop_capture()
                 raise ValueError(f"Unknown scenario name: {name}")
 
@@ -141,5 +140,4 @@ class ScenarioRunner:
             pid = stop_capture()
             self._capture_pid = pid
 
-            # zostawiamy scenario/pcap_path dla historii, ale running będzie false
             return self.status()

@@ -13,7 +13,6 @@ def _get_tshark_exe() -> str:
 def pcap_to_json(pcap_path: Path, out_path: Optional[Path] = None) -> str:
     """
     Zwraca JSON jako string (albo zapisuje do pliku, jeśli out_path podane).
-    Uwaga: to może być duże.
     """
     tshark = _get_tshark_exe()
     cmd = [
