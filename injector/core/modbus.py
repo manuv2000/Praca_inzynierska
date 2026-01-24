@@ -14,7 +14,7 @@ def modbus_client(cfg: Optional[PlcConfig] = None):
     host = cfg.effective_host
     port = cfg.effective_port
 
-    client = ModbusTcpClient(host, port=port)
+    client = ModbusTcpClient(host, port=port, timeout=3)
     try:
         if not client.connect():
             raise RuntimeError(f"Could not connect to PLC endpoint at {host}:{port}")

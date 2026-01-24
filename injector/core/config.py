@@ -6,9 +6,18 @@ import yaml
 
 _CONFIG_CACHE: Optional["PlcConfig"] = None
 
+
+@dataclass(frozen=True)
+class CaptureConfig:
+    enabled: bool = True
+    interface: str = "Adapter for loopback traffic capture"
+    bpf: str = "tcp port 502 or tcp port 1502"
+    ring_size_mb: int = 100
+    label_prefix: str = ""
+
+
 @dataclass(frozen=True)
 class PlcConfig:
-    # rzeczywiste PLC
     plc_host: str = "127.0.0.1"
     plc_port: int = 502
     unit_id: int = 1
@@ -20,10 +29,11 @@ class PlcConfig:
     safe_write_min: int = 0
     safe_write_max: int = 1000
 
-    # proxy
     proxy_enabled: bool = False
     proxy_host: str = "127.0.0.1"
     proxy_port: int = 1502
+
+    capture: CaptureConfig = CaptureConfig()
 
     @property
     def effective_host(self) -> str:
@@ -35,8 +45,8 @@ class PlcConfig:
 
 
 def _project_root() -> Path:
-    # injector/core/config.py -> project_root
     return Path(__file__).resolve().parents[2]
+
 
 def _load_yaml_dict() -> Dict[str, Any]:
     yaml_path = _project_root() / "config" / "plc_config.yaml"
@@ -46,9 +56,19 @@ def _load_yaml_dict() -> Dict[str, Any]:
         data = yaml.safe_load(f) or {}
     return data if isinstance(data, dict) else {}
 
+
 def _plc_config_from_yaml(data: Dict[str, Any]) -> PlcConfig:
     plc = data.get("plc", {}) or {}
     proxy = data.get("proxy", {}) or {}
+    capture = data.get("capture", {}) or {}
+
+    cap_cfg = CaptureConfig(
+        enabled=bool(capture.get("enabled", True)),
+        interface=str(capture.get("interface", CaptureConfig.interface)),
+        bpf=str(capture.get("bpf", CaptureConfig.bpf)),
+        ring_size_mb=int(capture.get("ring_size_mb", CaptureConfig.ring_size_mb)),
+        label_prefix=str(capture.get("label_prefix", "")),
+    )
 
     return PlcConfig(
         plc_host=str(plc.get("host", "127.0.0.1")),
@@ -65,7 +85,10 @@ def _plc_config_from_yaml(data: Dict[str, Any]) -> PlcConfig:
         proxy_enabled=bool(proxy.get("enabled", False)),
         proxy_host=str(proxy.get("host", "127.0.0.1")),
         proxy_port=int(proxy.get("port", 1502)),
+
+        capture=cap_cfg,
     )
+
 
 def get_plc_config() -> PlcConfig:
     global _CONFIG_CACHE
@@ -73,6 +96,7 @@ def get_plc_config() -> PlcConfig:
         data = _load_yaml_dict()
         _CONFIG_CACHE = _plc_config_from_yaml(data) if data else PlcConfig()
     return _CONFIG_CACHE
+
 
 def reset_plc_config_cache() -> None:
     global _CONFIG_CACHE

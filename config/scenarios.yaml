@@ -1,0 +1,61 @@
+defaults:
+  duration_s: 60
+
+scenarios:
+  - id: baseline
+    label: "Baseline only (HMI + normal_client)"
+    duration_s: 30
+    seed: 12345
+    tasks:
+      - kind: HMI
+        params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
+      - kind: NORMAL
+        params: { read_base: 0, read_count: 10, period_s: 0.5, jitter_s: 0.1, write_prob: 0.1 }
+
+  - id: baseline_ro_scan
+    label: "Baseline + READ-ONLY scan"
+    tasks:
+      - kind: HMI
+        params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
+      - kind: NORMAL
+        params: { read_base: 0, read_count: 10, period_s: 0.5, jitter_s: 0.1, write_prob: 0.1 }
+      - kind: SCAN_RO
+        params: { start_addr: 0, end_addr: 200, block_size: 10, delay_s: 0.01 }
+
+  - id: baseline_write_inj
+    label: "Baseline + WRITE injection"
+    tasks:
+      - kind: HMI
+        params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
+      - kind: NORMAL
+        params: { read_base: 0, read_count: 10, period_s: 0.5, jitter_s: 0.1, write_prob: 0.1 }
+      - kind: WRITE_INJ
+        params: { target_register: 2, qps: 10.0 }
+
+  - id: mass_overwrite_only
+    label: "MASS_OVERWRITE (FC16 parallel) only"
+    duration_s: 30
+    tasks:
+      - kind: MASS_OVERWRITE_FC16
+        params:
+          target_registers: [10,11,12,13,14,15,16,17,18,19]
+          chunk_size: 10
+          workers: 3
+          qps_per_worker: 5.0
+          min_value: 0
+          max_value: 1000
+
+  - id: baseline_proxy_spoof
+    label: "Baseline + PROXY spoofing"
+    cfg_overrides:
+      proxy_enabled: true
+    tasks:
+      - kind: PROXY_SPOOF
+        start_first: true
+        params:
+          listen_host: "127.0.0.1"
+          listen_port: 1502
+      - kind: HMI
+        params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
+      - kind: NORMAL
+        params: { read_base: 0, read_count: 10, period_s: 0.5, jitter_s: 0.1, write_prob: 0.1 }

