@@ -55,17 +55,19 @@ def _build_tshark_cmd(pcap: Path, decode_ports: List[int], proto: str, fields: L
 
     return cmd
 
+FC16_QTY_FIELDS = [
+    "modbus.word_cnt",
+    "modbus.quantity",
+    "modbus.quantity_of_regs",
+    "modbus.regs_cnt",
+]
 
-def run_tshark_rows(pcap: Path, decode_ports: List[int]) -> List[Dict[str, str]]:
+def _probe_qty_field(pcap: Path, decode_ports: List[int], proto: str) -> Optional[str]:
     """
-    Zwraca listę rekordów (dict: field->str) z tshark.
+    Sprawdza które pole quantity dla FC16 jest dostępne w lokalnym tshark.
+    Zwraca nazwę pola albo None.
     """
-    # Kandydaci dissektora:
-    proto_candidates = ["mbtcp", "modbus.tcp", "modbus"]
-
-    # Pola: bierzemy więcej niż wcześniej, żeby potem robić lepsze featury
-    # Dla FC16: count może być w różnych polach -> pobieramy kilka naraz.
-    fields = [
+    base_fields = [
         "frame.time_epoch",
         "frame.len",
         "ip.src",
@@ -74,22 +76,79 @@ def run_tshark_rows(pcap: Path, decode_ports: List[int]) -> List[Dict[str, str]]
         "tcp.dstport",
         "tcp.stream",
         "modbus.func_code",
-        "modbus.reference_num",   # start addr (często dla FC3/6/16)
-        "modbus.word_cnt",
+        "modbus.reference_num",
+    ]
+
+    for fqty in FC16_QTY_FIELDS:
+        fields = base_fields + [fqty]
+        cmd = _build_tshark_cmd(pcap, decode_ports, proto, fields)
+        _, out, err = _try_tshark(cmd)
+
+        # jeśli tshark krzyczy o niepoprawnych polach – próbujemy następne
+        if "Some fields aren't valid" in err:
+            continue
+        if "isn't valid for layer type" in err or "Valid protocols for layer type" in err:
+            continue
+
+        # OK – pole istnieje
+        return fqty
+
+    return None
+def run_tshark_rows(pcap: Path, decode_ports: List[int]) -> List[Dict[str, str]]:
+    """
+    Zwraca listę rekordów (dict: field->str) z tshark.
+    Dobiera protokół decode-as oraz pole quantity dla FC16 zależnie od wersji tshark.
+    """
+    proto_candidates = ["mbtcp", "modbus.tcp", "modbus"]
+
+    # pola stałe (zawsze chcemy je mieć)
+    base_fields = [
+        "frame.time_epoch",
+        "frame.len",
+        "ip.src",
+        "ip.dst",
+        "tcp.srcport",
+        "tcp.dstport",
+        "tcp.stream",
+        "modbus.func_code",
+        "modbus.reference_num",
     ]
 
     last_err = ""
     out_text = ""
+    used_fields: List[str] = []
 
     for proto in proto_candidates:
+        qty_field = _probe_qty_field(pcap, decode_ports, proto)
+        fields = list(base_fields)
+        if qty_field:
+            fields.append(qty_field)
+
         cmd = _build_tshark_cmd(pcap, decode_ports, proto, fields)
         code, out, err = _try_tshark(cmd)
 
+        # decode-as nie pasuje -> próbuj kolejny proto
         if "isn't valid for layer type" in err or "Valid protocols for layer type" in err:
             last_err = err.strip()
             continue
 
+        # jeśli mimo probe nadal są invalid fields, spróbuj bez qty_field (żeby nie wywalić całej analizy)
+        if "Some fields aren't valid" in err:
+            cmd2 = _build_tshark_cmd(pcap, decode_ports, proto, base_fields)
+            code2, out2, err2 = _try_tshark(cmd2)
+            if "Some fields aren't valid" not in err2 and not (
+                "isn't valid for layer type" in err2 or "Valid protocols for layer type" in err2
+            ):
+                out_text = out2
+                used_fields = list(base_fields)
+                last_err = err2.strip()
+                break
+
+            last_err = err.strip()
+            continue
+
         out_text = out
+        used_fields = fields
         last_err = err.strip()
         break
 
@@ -103,16 +162,16 @@ def run_tshark_rows(pcap: Path, decode_ports: List[int]) -> List[Dict[str, str]]
         line = line.strip()
         if not line:
             continue
-        parts = line.split("\t")
-        if len(parts) != len(fields):
-            # tshark czasem zwraca mniej pól jeśli brak - ale header=n + occurrence=f powinno ograniczać
-            # mimo to: dopaduj długość
-            parts = (parts + [""] * len(fields))[:len(fields)]
 
-        row = {fields[i]: parts[i].strip() for i in range(len(fields))}
+        parts = line.split("\t")
+        if len(parts) != len(used_fields):
+            parts = (parts + [""] * len(used_fields))[:len(used_fields)]
+
+        row = {used_fields[i]: parts[i].strip() for i in range(len(used_fields))}
         rows.append(row)
 
     return rows
+
 
 
 def _first_int(*candidates: str) -> Optional[int]:
@@ -167,8 +226,13 @@ def rows_to_packets(rows: List[Dict[str, str]]) -> List[PacketRecord]:
         frame_len = _first_int(r.get("frame.len", "")) or 0
         addr = _first_int(r.get("modbus.reference_num", ""))
 
-        # FC16 count: wybierz pierwsze dostępne
-        count = _first_int(r.get("modbus.word_cnt", ""))
+        # FC16 count: bierz pierwsze dostępne pole (różne wersje tshark)
+        count = _first_int(
+            r.get("modbus.word_cnt", ""),
+            r.get("modbus.quantity", ""),
+            r.get("modbus.quantity_of_regs", ""),
+            r.get("modbus.regs_cnt", ""),
+        )
 
         packets.append(PacketRecord(
             ts=ts,
@@ -183,6 +247,7 @@ def rows_to_packets(rows: List[Dict[str, str]]) -> List[PacketRecord]:
             tcp_stream=r.get("tcp.stream", ""),
         ))
     return packets
+
 
 
 # -------------------------

@@ -1,5 +1,6 @@
 # injector/app/scenario_loader.py
 
+
 from __future__ import annotations
 from dataclasses import replace
 from pathlib import Path
@@ -38,12 +39,16 @@ def build_scenario(scenario_id: str, base_cfg: Optional[PlcConfig] = None) -> Tu
     data = load_scenarios_yaml()
     defaults = data.get("defaults", {}) or {}
     default_duration = defaults.get("duration_s", None)
+    default_warmup = float(defaults.get("warmup_s", 0.0) or 0.0)
+    default_cooldown = float(defaults.get("cooldown_s", 0.0) or 0.0)
 
     scenarios = data.get("scenarios", []) or []
     for s in scenarios:
         if s.get("id") == scenario_id:
             label = str(s.get("label", scenario_id))
             duration_s = s.get("duration_s", default_duration)
+            warmup_s = float(s.get("warmup_s", default_warmup) or 0.0)
+            cooldown_s = float(s.get("cooldown_s", default_cooldown) or 0.0)
             duration_s = float(duration_s) if duration_s is not None else None
             seed = s.get("seed", None)
             seed = int(seed) if seed is not None else None
