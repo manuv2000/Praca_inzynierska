@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 
+from pathlib import Path
+
 import pandas as pd
 
 
@@ -19,6 +21,9 @@ LABEL_MAP = {
 
 ANOMALY_SET = {"baseline_ro_scan", "baseline_write_inj", "baseline_proxy_spoof"}
 
+
+def _project_root() -> Path:
+    return Path(__file__).resolve().parents[1]
 
 def _read_index_csv(index_path: Path) -> List[Dict[str, str]]:
     rows: List[Dict[str, str]] = []
@@ -148,7 +153,7 @@ def main() -> None:
     ap.add_argument("--no-drop-edges", action="store_true", help="Nie usuwaj pierwszego/ostatniego okna per run")
     args = ap.parse_args()
 
-    index_csv = Path(args.index)
+    index_csv = _project_root() / "capture" / "pcap" / "index.csv"
     out_csv = Path(args.out)
 
     df, stats = build_dataset(
