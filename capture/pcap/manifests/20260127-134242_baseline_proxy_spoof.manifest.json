@@ -1,0 +1,96 @@
+{
+  "run_id": "20260127-134242_baseline_proxy_spoof",
+  "scenario_id": "baseline_proxy_spoof",
+  "label": "Baseline + PROXY spoofing",
+  "seed": null,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769517762.748053,
+  "platform": {
+    "python": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.26100-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": true,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "PROXY",
+      "start_first": true,
+      "kwargs": {
+        "listen_host": "127.0.0.1",
+        "listen_port": 1502,
+        "ready_event": "<threading.Event object at 0x00000241729BD6D0>"
+      }
+    },
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof.pcapng",
+    "pcap_files": [
+      "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.pcapng",
+    "pcap_main_sha256": "0d299f6a6dd1090f9704d4bf449193cb71993ff02f13c755a813461c14e800cd",
+    "capture_pid": 32124
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 292.26953125,
+    "pcap_total_kb": 292.26953125,
+    "capture_pid": 32124,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.pcapng ===\nŚcieżka: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.pcapng\nŁącznie pakietów Modbus: 1716\nCzas trwania śladu: 60.035 s\nŚrednio pakietów/s: 28.6\nFC3: 1672 | FC6: 44 | FC16: 0\nFC6 distinct addrs: 1 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=64.1B | std=8.5B\nFlows: 8 | top3: [('127.0.0.1:49257 -> 127.0.0.1:1502', 288), ('127.0.0.1:49259 -> 127.0.0.1:502', 288), ('127.0.0.1:502 -> 127.0.0.1:49259', 288)]\nPorts seen (dst): {'1502': 429, '502': 429, '49261': 141, '49259': 288, '49258': 141, '49257': 288}\n[OK] windows report: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.win5s.csv (rows=13)\n\n",
+    "windows_csv": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.win5s.csv",
+    "windows_report": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260127-134244_20260127-134242_baseline_proxy_spoof_00001_20260127134244.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769517828.0111134
+}

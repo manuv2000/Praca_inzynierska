@@ -34,7 +34,7 @@ def make_task(kind: str, params: dict, *, start_first: bool = False) -> TaskSpec
             name="PROXY",
             target=target,
             kwargs=merged,
-            start_first=start_first,
+            start_first=True,
             ready_event=ready,
             ready_timeout_s=2.0,
         )

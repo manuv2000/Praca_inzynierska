@@ -14,13 +14,17 @@ def main():
 
     for scenario_id, repeats in plan:
         for i in range(repeats):
-            label, cfg, tasks, duration_s, seed = build_scenario(scenario_id)
+            sc_id, label, cfg, tasks, duration_s, seed, warmup_s, cooldown_s = build_scenario(scenario_id)
+
             run_scenario(
-                label=f"{scenario_id}_run{i+1}",
+                scenario_id=sc_id,
+                label=f"{sc_id}_run{i+1}",
                 cfg=cfg,
                 tasks=tasks,
                 duration_s=duration_s,
                 seed=seed,
+                warmup_s=warmup_s,
+                cooldown_s=cooldown_s,
             )
 
 if __name__ == "__main__":

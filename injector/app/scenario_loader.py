@@ -34,7 +34,7 @@ def list_scenarios() -> List[Dict[str, Any]]:
     return scenarios
 
 
-def build_scenario(scenario_id: str, base_cfg: Optional[PlcConfig] = None) -> Tuple[str, PlcConfig, List[TaskSpec], Optional[float], Optional[int]]:
+def build_scenario(scenario_id: str, base_cfg: Optional[PlcConfig] = None) ->  Tuple[str, str, PlcConfig, List[TaskSpec], Optional[float], Optional[int], float, float]:
 
     data = load_scenarios_yaml()
     defaults = data.get("defaults", {}) or {}
@@ -72,7 +72,7 @@ def build_scenario(scenario_id: str, base_cfg: Optional[PlcConfig] = None) -> Tu
                 validate_task(kind, params)
                 tasks.append(make_task(kind, params, start_first=start_first))
 
-            return label, cfg, tasks, duration_s, seed
+            return scenario_id, label, cfg, tasks, duration_s, seed, warmup_s, cooldown_s
 
     raise KeyError(f"Scenario not found: {scenario_id}")
 

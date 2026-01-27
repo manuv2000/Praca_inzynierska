@@ -53,7 +53,8 @@ def start_capture(
         dumpcap_exe,
         "-i", interface,
         "-f", bpf,
-        "-b", f"filesize:{ring_size_mb}",
+        "-b", f"filesize:{int(ring_size_mb) * 1024}",
+        "-b", "files:50",
         "-w", str(pcap_path),
     ]
 

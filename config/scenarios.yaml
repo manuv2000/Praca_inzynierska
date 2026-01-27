@@ -6,7 +6,7 @@ defaults:
 scenarios:
   - id: baseline
     label: "Baseline only (HMI + normal_client)"
-    duration_s: 30
+    duration_s: 60
     seed: 12345
     tasks:
       - kind: HMI
@@ -36,7 +36,7 @@ scenarios:
 
   - id: mass_overwrite_only
     label: "MASS_OVERWRITE (FC16 parallel) only"
-    duration_s: 30
+    duration_s: 60
     tasks:
       - kind: MASS_OVERWRITE_FC16
         params:

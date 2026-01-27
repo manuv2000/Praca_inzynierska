@@ -8,9 +8,10 @@ import math
 import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import List, Tuple, Dict, Any, Optional, Iterable
+from statistics import median
 
 PCAP_EXTENSIONS = (".pcap", ".pcapng")
 TSHARK_FIXED_PATH = r"C:\Program Files\Wireshark\tshark.exe"
@@ -172,6 +173,20 @@ def run_tshark_rows(pcap: Path, decode_ports: List[int]) -> List[Dict[str, str]]
 
     return rows
 
+def _as_output_path(base: Path, pcap: Path, suffix: str) -> Path:
+    """
+    Jeśli user poda katalog (istniejący lub "dir-like") -> dopnij nazwę pliku.
+    Jeśli poda plik -> użyj wprost.
+    """
+    base_str = str(base)
+    is_dir_like = base_str.endswith(("/", "\\")) or base.exists() and base.is_dir() or (base.suffix == "")
+
+    if is_dir_like:
+        base.mkdir(parents=True, exist_ok=True)
+        return base / f"{pcap.stem}{suffix}"
+    else:
+        base.parent.mkdir(parents=True, exist_ok=True)
+        return base
 
 
 def _first_int(*candidates: str) -> Optional[int]:
@@ -206,14 +221,33 @@ class PacketRecord:
     sport: str
     dport: str
     tcp_stream: str
+    direction: str
+    delta_t: Optional[float]
 
     @property
     def flow(self) -> str:
         return f"{self.ip_src}:{self.sport} -> {self.ip_dst}:{self.dport}"
 
+def infer_direction(sport: str, dport: str, server_ports: set[str]) -> str:
+    # server_ports to porty "serwera" modbus (502/1502) jako stringi
+    if dport in server_ports:
+        return "c2s"
+    if sport in server_ports:
+        return "s2c"
+    return "other"
 
-def rows_to_packets(rows: List[Dict[str, str]]) -> List[PacketRecord]:
+
+def rows_to_packets(
+    rows: List[Dict[str, str]],
+    *,
+    server_ports: Optional[set[str]] = None
+) -> List["PacketRecord"]:
+
+    if server_ports is None:
+        server_ports = {str(p) for p in DEFAULT_DECODE_PORTS}  # {"502","1502"}
+
     packets: List[PacketRecord] = []
+
     for r in rows:
         ts = _first_float(r.get("frame.time_epoch", ""))
         if ts is None:
@@ -226,7 +260,7 @@ def rows_to_packets(rows: List[Dict[str, str]]) -> List[PacketRecord]:
         frame_len = _first_int(r.get("frame.len", "")) or 0
         addr = _first_int(r.get("modbus.reference_num", ""))
 
-        # FC16 count: bierz pierwsze dostępne pole (różne wersje tshark)
+        # FC16 qty: bierz pierwsze dostępne pole (różne wersje tshark)
         count = _first_int(
             r.get("modbus.word_cnt", ""),
             r.get("modbus.quantity", ""),
@@ -234,21 +268,39 @@ def rows_to_packets(rows: List[Dict[str, str]]) -> List[PacketRecord]:
             r.get("modbus.regs_cnt", ""),
         )
 
+        ip_src = r.get("ip.src", "") or ""
+        ip_dst = r.get("ip.dst", "") or ""
+        sport = r.get("tcp.srcport", "") or ""
+        dport = r.get("tcp.dstport", "") or ""
+        tcp_stream = r.get("tcp.stream", "") or ""
+
         packets.append(PacketRecord(
             ts=ts,
             frame_len=frame_len,
             fc=fc,
             addr=addr,
             count=count,
-            ip_src=r.get("ip.src", ""),
-            ip_dst=r.get("ip.dst", ""),
-            sport=r.get("tcp.srcport", ""),
-            dport=r.get("tcp.dstport", ""),
-            tcp_stream=r.get("tcp.stream", ""),
+            ip_src=ip_src,
+            ip_dst=ip_dst,
+            sport=sport,
+            dport=dport,
+            tcp_stream=tcp_stream,
+            direction=infer_direction(sport, dport, server_ports),
+            delta_t=None,
         ))
+
     return packets
 
 
+def add_interarrival(packets: List[PacketRecord]) -> List[PacketRecord]:
+    packets = sorted(packets, key=lambda p: p.ts)
+    out: List[PacketRecord] = []
+    prev_ts: Optional[float] = None
+    for p in packets:
+        dt = (p.ts - prev_ts) if prev_ts is not None else None
+        out.append(replace(p, delta_t=dt))
+        prev_ts = p.ts
+    return out
 
 # -------------------------
 # feature utils (data_process)
@@ -332,6 +384,106 @@ def extract_summary_features(pcap: Path, packets: List[PacketRecord], decode_por
         "ports_seen_dst": dict(ports_seen_dst),
     }
 
+def build_windows_report(
+    *,
+    pcap: Path,
+    windows_csv: Optional[Path],
+    windows: List[Dict[str, Any]],
+    window_s: float,
+    # progi – ustawiamy rozsądne defaulty
+    min_rows: int = 2,
+    min_total_pkts: int = 50,
+    warn_pkts_per_s_low: float = 5.0,
+    warn_pkts_per_s_high: float = 200.0,
+    warn_top_flow_share: float = 0.9,
+) -> Dict[str, Any]:
+    errors = []
+    warnings = []
+
+    if not windows:
+        errors.append("no_windows")
+        status = "FAIL"
+        return {
+            "pcap": str(pcap),
+            "windows_csv": str(windows_csv) if windows_csv else None,
+            "report": {
+                "status": status,
+                "errors": errors,
+                "warnings": warnings,
+                "stats": {},
+                "params": {
+                    "window_s": window_s,
+                    "min_rows": min_rows,
+                    "min_total_pkts": min_total_pkts,
+                    "warn_pkts_per_s_low": warn_pkts_per_s_low,
+                    "warn_pkts_per_s_high": warn_pkts_per_s_high,
+                    "warn_top_flow_share": warn_top_flow_share,
+                }
+            }
+        }
+
+    pkts_per_s = [float(w.get("pkts_per_s", 0.0)) for w in windows]
+    total_pkts = int(sum(int(w.get("n_pkts", 0)) for w in windows))
+    top_flow_share = [float(w.get("top_flow_share", 0.0)) for w in windows]
+
+    # feature-presence
+    any_fc16 = any(int(w.get("fc16", 0)) > 0 for w in windows)
+    any_zero_flows = any(int(w.get("n_flows", 0)) == 0 for w in windows)
+
+    # stats
+    med = statistics.median(pkts_per_s) if pkts_per_s else 0.0
+    mn = min(pkts_per_s) if pkts_per_s else 0.0
+    mx = max(pkts_per_s) if pkts_per_s else 0.0
+    max_tfs = max(top_flow_share) if top_flow_share else 0.0
+
+    # basic validity
+    if len(windows) < min_rows:
+        errors.append(f"too_few_windows(<{min_rows})")
+    if total_pkts < min_total_pkts:
+        errors.append(f"too_few_total_pkts(<{min_total_pkts})")
+
+    # warnings
+    if med < warn_pkts_per_s_low:
+        warnings.append(f"median_pkts_per_s_low(<{warn_pkts_per_s_low})")
+    if med > warn_pkts_per_s_high:
+        warnings.append(f"median_pkts_per_s_high(>{warn_pkts_per_s_high})")
+    if max_tfs > warn_top_flow_share:
+        warnings.append(f"top_flow_share_high(>{warn_top_flow_share})")
+
+    status = "OK"
+    if errors:
+        status = "FAIL"
+    elif warnings:
+        status = "WARN"
+
+    return {
+        "pcap": str(pcap),
+        "windows_csv": str(windows_csv) if windows_csv else None,
+        "report": {
+            "status": status,
+            "errors": errors,
+            "warnings": warnings,
+            "stats": {
+                "rows": len(windows),
+                "total_pkts": total_pkts,
+                "median_pkts_per_s": med,
+                "min_pkts_per_s": mn,
+                "max_pkts_per_s": mx,
+                "max_top_flow_share": max_tfs,
+                "any_fc16": bool(any_fc16),
+                "any_zero_flows": bool(any_zero_flows),
+            },
+            "params": {
+                "window_s": float(window_s),
+                "min_rows": int(min_rows),
+                "min_total_pkts": int(min_total_pkts),
+                "warn_pkts_per_s_low": float(warn_pkts_per_s_low),
+                "warn_pkts_per_s_high": float(warn_pkts_per_s_high),
+                "warn_top_flow_share": float(warn_top_flow_share),
+            }
+        }
+    }
+
 
 def window_features(
     packets: List[PacketRecord],
@@ -406,6 +558,89 @@ def window_features(
         t_left = t_right
 
     return out
+
+
+
+def validate_windows(
+    wins: List[Dict[str, Any]],
+    *,
+    window_s: float,
+    min_rows: int = 2,
+    min_total_pkts: int = 50,
+    warn_pkts_per_s_low: float = 5.0,
+    warn_pkts_per_s_high: float = 200.0,
+    warn_top_flow_share: float = 0.90,
+) -> Dict[str, Any]:
+    """
+    Zwraca raport walidacji dla okien czasowych.
+    status: OK / WARN / FAIL
+    """
+    report = {
+        "status": "OK",
+        "errors": [],
+        "warnings": [],
+        "stats": {},
+        "params": {
+            "window_s": float(window_s),
+            "min_rows": int(min_rows),
+            "min_total_pkts": int(min_total_pkts),
+            "warn_pkts_per_s_low": float(warn_pkts_per_s_low),
+            "warn_pkts_per_s_high": float(warn_pkts_per_s_high),
+            "warn_top_flow_share": float(warn_top_flow_share),
+        }
+    }
+
+    if not wins:
+        report["status"] = "FAIL"
+        report["errors"].append("no_windows_generated")
+        return report
+
+    rows = len(wins)
+    total_pkts = sum(int(w.get("n_pkts", 0) or 0) for w in wins)
+    pkps = [float(w.get("pkts_per_s", 0.0) or 0.0) for w in wins]
+    top_share = [float(w.get("top_flow_share", 0.0) or 0.0) for w in wins]
+
+    any_fc16 = any(int(w.get("fc16", 0) or 0) > 0 for w in wins)
+    any_zero_flows = any(int(w.get("n_flows", 0) or 0) == 0 for w in wins)
+
+    report["stats"] = {
+        "rows": rows,
+        "total_pkts": total_pkts,
+        "median_pkts_per_s": float(median(pkps)) if pkps else 0.0,
+        "min_pkts_per_s": float(min(pkps)) if pkps else 0.0,
+        "max_pkts_per_s": float(max(pkps)) if pkps else 0.0,
+        "max_top_flow_share": float(max(top_share)) if top_share else 0.0,
+        "any_fc16": bool(any_fc16),
+        "any_zero_flows": bool(any_zero_flows),
+    }
+
+    # FAIL conditions
+    if rows < min_rows:
+        report["status"] = "FAIL"
+        report["errors"].append(f"too_few_rows(<{min_rows})")
+
+    if total_pkts < min_total_pkts:
+        report["status"] = "FAIL"
+        report["errors"].append(f"too_few_packets(<{min_total_pkts})")
+
+    # WARN conditions
+    if pkps and (report["stats"]["median_pkts_per_s"] < warn_pkts_per_s_low):
+        report["warnings"].append(f"low_median_pkts_per_s(<{warn_pkts_per_s_low})")
+
+    if pkps and (report["stats"]["median_pkts_per_s"] > warn_pkts_per_s_high):
+        report["warnings"].append(f"high_median_pkts_per_s(>{warn_pkts_per_s_high})")
+
+    if top_share and report["stats"]["max_top_flow_share"] > warn_top_flow_share:
+        report["warnings"].append(f"top_flow_share_high(>{warn_top_flow_share})")
+
+    if any_zero_flows:
+        report["warnings"].append("some_windows_have_zero_flows")
+
+    # Jeśli są warnings a nie ma FAIL -> WARN
+    if report["status"] != "FAIL" and report["warnings"]:
+        report["status"] = "WARN"
+
+    return report
 
 
 # -------------------------
@@ -529,6 +764,8 @@ def main(argv: List[str]) -> None:
     ap.add_argument("--export-packets", default=None, help="Zapisz rekordy pakietów do JSONL (data_extract).")
     ap.add_argument("--export-windows", default=None, help="Zapisz cechy okien do CSV (data_process).")
     ap.add_argument("--window-s", type=float, default=5.0, help="Szerokość okna dla cech (sekundy).")
+    ap.add_argument("--export-report", default=None, help="Zapisz report JSON dla windows CSV (obok pliku CSV).")
+
     args = ap.parse_args(argv[1:])
 
     decode_ports = args.decode_port if args.decode_port else DEFAULT_DECODE_PORTS
@@ -552,18 +789,42 @@ def main(argv: List[str]) -> None:
         print_summary(pcap, feats)
 
         if args.export_packets:
-            out = Path(args.export_packets)
-            # jeśli user poda katalog, dopnij nazwę pliku
-            if out.is_dir() or str(args.export_packets).endswith(("/", "\\")):
-                out = out / (pcap.stem + ".jsonl")
+            out_base = Path(args.export_packets)
+            out = _as_output_path(out_base, pcap, ".jsonl")
             export_packets_jsonl(packets, out)
 
         if args.export_windows:
-            out = Path(args.export_windows)
-            if out.is_dir() or str(args.export_windows).endswith(("/", "\\")):
-                out = out / (pcap.stem + f".win{args.window_s:g}s.csv")
+            out_base = Path(args.export_windows)
+            out = _as_output_path(out_base, pcap, f".win{args.window_s:g}s.csv")
             wins = window_features(packets, window_s=args.window_s)
             export_windows_csv(wins, out)
+
+            if args.export_report:
+                rep_dir = Path(args.export_report)
+                rep_dir.mkdir(parents=True, exist_ok=True)
+                rep_path = Path(str(out) + ".report.json")
+                report = build_report(pcap, feats, wins)
+                rep_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+                print(f"[OK] report saved: {rep_path}")
+
+
+            # --- validation report next to CSV ---
+            rep = validate_windows(wins, window_s=args.window_s)
+            rep_path = out.with_suffix(out.suffix + ".report.json")
+            rep_payload = {
+                "pcap": str(pcap),
+                "windows_csv": str(out),
+                "report": rep,
+            }
+            rep_path.write_text(json.dumps(rep_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+            print(f"[{rep['status']}] windows report: {rep_path}")
+            if rep["status"] == "FAIL":
+                print("  errors:", rep["errors"])
+            elif rep["status"] == "WARN":
+                print("  warnings:", rep["warnings"])
+
+            print(f"[OK] windows saved: {out} (rows={len(wins)})")
 
 
 if __name__ == "__main__":

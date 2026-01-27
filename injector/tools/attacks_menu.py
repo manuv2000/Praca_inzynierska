@@ -23,8 +23,18 @@ def main() -> None:
         print("Invalid choice")
         return
 
-    label, cfg, tasks, duration_s, seed = build_scenario(str(scenario_id))
-    run_scenario(label=label, cfg=cfg, tasks=tasks, duration_s=duration_s, seed=seed)
+    scenario_id, label, cfg, tasks, duration_s, seed, warmup_s, cooldown_s = build_scenario(str(scenario_id))
+
+    run_scenario(
+        scenario_id=scenario_id,
+        label=label,
+        cfg=cfg,
+        tasks=tasks,
+        duration_s=duration_s,
+        seed=seed,
+        warmup_s=warmup_s,
+        cooldown_s=cooldown_s,
+    )
 
 
 if __name__ == "__main__":
