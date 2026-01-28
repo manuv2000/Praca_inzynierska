@@ -1,0 +1,96 @@
+{
+  "run_id": "20260128-151156_baseline_proxy_spoof_seed864807",
+  "scenario_id": "baseline_proxy_spoof",
+  "label": "baseline_proxy_spoof_run3_seed864807_20260128-151156",
+  "seed": 864807,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769609516.0148065,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": true,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "PROXY",
+      "start_first": true,
+      "kwargs": {
+        "listen_host": "127.0.0.1",
+        "listen_port": 1502,
+        "ready_event": "<threading.Event object at 0x000001A5C3D54880>"
+      }
+    },
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.pcapng",
+    "pcap_main_sha256": "156d8fc654c9a92481a8698ee2a3a53ab38c7b68c665b53c19d78ca691d825a8",
+    "capture_pid": 25876
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 297.4765625,
+    "pcap_total_kb": 297.4765625,
+    "capture_pid": 25876,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.pcapng\nŁącznie pakietów Modbus: 1748\nCzas trwania śladu: 60.008 s\nŚrednio pakietów/s: 29.1\nFC3: 1692 | FC6: 56 | FC16: 0\nFC6 distinct addrs: 1 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=63.9B | std=8.5B\nFlows: 8 | top3: [('127.0.0.1:62590 -> 127.0.0.1:1502', 291), ('127.0.0.1:62592 -> 127.0.0.1:502', 291), ('127.0.0.1:502 -> 127.0.0.1:62592', 291)]\nPorts seen (dst): {'1502': 437, '502': 437, '62593': 146, '62591': 146, '62592': 291, '62590': 291}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.win5s.csv (rows=13)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-151158_20260128-151156_baseline_proxy_spoof_seed864807_00001_20260128151158.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769609580.9289806
+}

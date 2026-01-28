@@ -1,0 +1,87 @@
+{
+  "run_id": "20260128-023929_baseline",
+  "scenario_id": "baseline",
+  "label": "Baseline only (HMI + normal_client)",
+  "seed": null,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769564369.6260905,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-023931_20260128-023929_baseline.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.pcapng",
+    "pcap_main_sha256": "22fe579da6054a35226d7620ffebd594221a3ab9806dc4374b8af88ce4f58255",
+    "capture_pid": 50256
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 147.8984375,
+    "pcap_total_kb": 147.8984375,
+    "capture_pid": 50256,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.pcapng\nŁącznie pakietów Modbus: 868\nCzas trwania śladu: 59.951 s\nŚrednio pakietów/s: 14.5\nFC3: 840 | FC6: 28 | FC16: 0\nFC6 distinct addrs: 0 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=63.9B | std=8.5B\nFlows: 4 | top3: [('127.0.0.1:55518 -> 127.0.0.1:502', 287), ('127.0.0.1:502 -> 127.0.0.1:55518', 287), ('127.0.0.1:55519 -> 127.0.0.1:502', 147)]\nPorts seen (dst): {'502': 434, '55518': 287, '55519': 147}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.win5s.csv (rows=12)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-023931_20260128-023929_baseline_00001_20260128023931.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769564434.2376077
+}
