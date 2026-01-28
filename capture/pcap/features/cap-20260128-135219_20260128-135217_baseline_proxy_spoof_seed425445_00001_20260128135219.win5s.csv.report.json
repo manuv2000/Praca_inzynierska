@@ -1,0 +1,27 @@
+{
+  "pcap": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-135219_20260128-135217_baseline_proxy_spoof_seed425445_00001_20260128135219.pcapng",
+  "windows_csv": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-135219_20260128-135217_baseline_proxy_spoof_seed425445_00001_20260128135219.win5s.csv",
+  "report": {
+    "status": "OK",
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "rows": 12,
+      "total_pkts": 1780,
+      "median_pkts_per_s": 29.6,
+      "min_pkts_per_s": 26.4,
+      "max_pkts_per_s": 32.8,
+      "max_top_flow_share": 0.18181818181818182,
+      "any_fc16": false,
+      "any_zero_flows": false
+    },
+    "params": {
+      "window_s": 5.0,
+      "min_rows": 2,
+      "min_total_pkts": 50,
+      "warn_pkts_per_s_low": 5.0,
+      "warn_pkts_per_s_high": 200.0,
+      "warn_top_flow_share": 0.9
+    }
+  }
+}

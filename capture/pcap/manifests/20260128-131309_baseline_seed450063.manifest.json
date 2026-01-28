@@ -1,0 +1,87 @@
+{
+  "run_id": "20260128-131309_baseline_seed450063",
+  "scenario_id": "baseline",
+  "label": "baseline_run20_seed450063_20260128-131309",
+  "seed": 450063,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769602389.9856842,
+  "platform": {
+    "python": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.26100-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-131311_20260128-131309_baseline_seed450063.pcapng",
+    "pcap_files": [
+      "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.pcapng",
+    "pcap_main_sha256": "d57d35a822225090ae80b30757da903920b3871ff5ecd46d715714f6dabe7129",
+    "capture_pid": 4500
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 153.29296875,
+    "pcap_total_kb": 153.29296875,
+    "capture_pid": 4500,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.pcapng ===\nŚcieżka: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.pcapng\nŁącznie pakietów Modbus: 900\nCzas trwania śladu: 59.976 s\nŚrednio pakietów/s: 15.0\nFC3: 870 | FC6: 30 | FC16: 0\nFC6 distinct addrs: 1 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=63.9B | std=8.5B\nFlows: 4 | top3: [('127.0.0.1:64312 -> 127.0.0.1:502', 298), ('127.0.0.1:502 -> 127.0.0.1:64312', 298), ('127.0.0.1:64313 -> 127.0.0.1:502', 152)]\nPorts seen (dst): {'502': 450, '64312': 298, '64313': 152}\n[OK] windows report: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.win5s.csv (rows=12)\n\n",
+    "windows_csv": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.win5s.csv",
+    "windows_report": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-131311_20260128-131309_baseline_seed450063_00001_20260128131312.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769602454.5358417
+}

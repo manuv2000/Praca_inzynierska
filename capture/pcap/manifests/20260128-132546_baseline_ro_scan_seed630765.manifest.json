@@ -1,0 +1,97 @@
+{
+  "run_id": "20260128-132546_baseline_ro_scan_seed630765",
+  "scenario_id": "baseline_ro_scan",
+  "label": "baseline_ro_scan_run6_seed630765_20260128-132546",
+  "seed": 630765,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769603146.9046087,
+  "platform": {
+    "python": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.26100-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    },
+    {
+      "name": "SCAN_RO",
+      "start_first": false,
+      "kwargs": {
+        "start_addr": 0,
+        "end_addr": 200,
+        "block_size": 10,
+        "delay_s": 0.01
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765.pcapng",
+    "pcap_files": [
+      "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.pcapng",
+    "pcap_main_sha256": "38ab207657b3ba16ad1222567d401519a5bf4b30b3b5d2002743942695cf9c53",
+    "capture_pid": 24912
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 1456.88671875,
+    "pcap_total_kb": 1456.88671875,
+    "capture_pid": 24912,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.pcapng ===\nŚcieżka: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.pcapng\nŁącznie pakietów Modbus: 8590\nCzas trwania śladu: 59.947 s\nŚrednio pakietów/s: 143.3\nFC3: 8566 | FC6: 24 | FC16: 0\nFC6 distinct addrs: 1 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=64.1B | std=8.5B\nFlows: 6 | top3: [('127.0.0.1:52159 -> 127.0.0.1:502', 3862), ('127.0.0.1:502 -> 127.0.0.1:52159', 3862), ('127.0.0.1:52157 -> 127.0.0.1:502', 292)]\nPorts seen (dst): {'502': 4295, '52159': 3862, '52157': 292, '52158': 141}\n[OK] windows report: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.win5s.csv (rows=12)\n\n",
+    "windows_csv": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.win5s.csv",
+    "windows_report": "C:\\Users\\poulm\\PycharmProjects\\pythonProject2\\capture\\pcap\\features\\cap-20260128-132548_20260128-132546_baseline_ro_scan_seed630765_00001_20260128132549.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769603212.1700745
+}
