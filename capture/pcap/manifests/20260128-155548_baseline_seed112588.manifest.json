@@ -1,0 +1,87 @@
+{
+  "run_id": "20260128-155548_baseline_seed112588",
+  "scenario_id": "baseline",
+  "label": "baseline_run8_seed112588_20260128-155548",
+  "seed": 112588,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769612148.9745884,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-155550_20260128-155548_baseline_seed112588.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.pcapng",
+    "pcap_main_sha256": "234c2598aee6fe1baff102e69cf6ca06478e7ceadc18c83af134235135ac25f2",
+    "capture_pid": 23952
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 150.19921875,
+    "pcap_total_kb": 150.19921875,
+    "capture_pid": 23952,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.pcapng\nŁącznie pakietów Modbus: 882\nCzas trwania śladu: 59.957 s\nŚrednio pakietów/s: 14.7\nFC3: 850 | FC6: 32 | FC16: 0\nFC6 distinct addrs: 0 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=63.9B | std=8.5B\nFlows: 4 | top3: [('127.0.0.1:52428 -> 127.0.0.1:502', 290), ('127.0.0.1:502 -> 127.0.0.1:52428', 290), ('127.0.0.1:52429 -> 127.0.0.1:502', 151)]\nPorts seen (dst): {'502': 441, '52428': 290, '52429': 151}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.win5s.csv (rows=12)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-155550_20260128-155548_baseline_seed112588_00001_20260128155551.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769612213.8190424
+}

@@ -1,0 +1,27 @@
+{
+  "pcap": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-025723_20260128-025721_baseline_ro_scan_00001_20260128025723.pcapng",
+  "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-025723_20260128-025721_baseline_ro_scan_00001_20260128025723.win5s.csv",
+  "report": {
+    "status": "OK",
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "rows": 12,
+      "total_pkts": 8604,
+      "median_pkts_per_s": 143.2,
+      "min_pkts_per_s": 142.4,
+      "max_pkts_per_s": 145.2,
+      "max_top_flow_share": 0.453781512605042,
+      "any_fc16": false,
+      "any_zero_flows": false
+    },
+    "params": {
+      "window_s": 5.0,
+      "min_rows": 2,
+      "min_total_pkts": 50,
+      "warn_pkts_per_s_low": 5.0,
+      "warn_pkts_per_s_high": 200.0,
+      "warn_top_flow_share": 0.9
+    }
+  }
+}

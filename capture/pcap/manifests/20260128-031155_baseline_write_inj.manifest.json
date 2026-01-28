@@ -1,0 +1,95 @@
+{
+  "run_id": "20260128-031155_baseline_write_inj",
+  "scenario_id": "baseline_write_inj",
+  "label": "Baseline + WRITE injection",
+  "seed": null,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769566315.2588232,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    },
+    {
+      "name": "WRITE_INJ",
+      "start_first": false,
+      "kwargs": {
+        "target_register": 2,
+        "qps": 10.0
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-031157_20260128-031155_baseline_write_inj.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.pcapng",
+    "pcap_main_sha256": "496f0d4b4263f57f9b9c818e30b88cebcb21a9de28efaa42773895da6b29dfb5",
+    "capture_pid": 45260
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 326.02734375,
+    "pcap_total_kb": 326.02734375,
+    "capture_pid": 45260,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.pcapng\nŁącznie pakietów Modbus: 1978\nCzas trwania śladu: 59.979 s\nŚrednio pakietów/s: 33.0\nFC3: 844 | FC6: 1134 | FC16: 0\nFC6 distinct addrs: 0 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=59.5B | std=6.9B\nFlows: 6 | top3: [('127.0.0.1:59564 -> 127.0.0.1:502', 554), ('127.0.0.1:502 -> 127.0.0.1:59564', 554), ('127.0.0.1:59565 -> 127.0.0.1:502', 291)]\nPorts seen (dst): {'502': 989, '59563': 144, '59564': 554, '59565': 291}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.win5s.csv (rows=12)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-031157_20260128-031155_baseline_write_inj_00001_20260128031157.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769566380.0743544
+}

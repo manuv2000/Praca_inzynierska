@@ -1,0 +1,27 @@
+{
+  "pcap": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-151512_20260128-151510_baseline_proxy_spoof_seed828922_00001_20260128151512.pcapng",
+  "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-151512_20260128-151510_baseline_proxy_spoof_seed828922_00001_20260128151512.win5s.csv",
+  "report": {
+    "status": "OK",
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "rows": 12,
+      "total_pkts": 1684,
+      "median_pkts_per_s": 27.6,
+      "min_pkts_per_s": 26.4,
+      "max_pkts_per_s": 31.2,
+      "max_top_flow_share": 0.17857142857142858,
+      "any_fc16": false,
+      "any_zero_flows": false
+    },
+    "params": {
+      "window_s": 5.0,
+      "min_rows": 2,
+      "min_total_pkts": 50,
+      "warn_pkts_per_s_low": 5.0,
+      "warn_pkts_per_s_high": 200.0,
+      "warn_top_flow_share": 0.9
+    }
+  }
+}

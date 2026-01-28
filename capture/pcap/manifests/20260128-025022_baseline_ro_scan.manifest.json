@@ -1,0 +1,97 @@
+{
+  "run_id": "20260128-025022_baseline_ro_scan",
+  "scenario_id": "baseline_ro_scan",
+  "label": "Baseline + READ-ONLY scan",
+  "seed": null,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769565022.4243062,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "HMI",
+      "start_first": false,
+      "kwargs": {
+        "base_address": 0,
+        "count": 10,
+        "period_s": 0.2,
+        "jitter_s": 0.05
+      }
+    },
+    {
+      "name": "NORMAL",
+      "start_first": false,
+      "kwargs": {
+        "read_base": 0,
+        "read_count": 10,
+        "period_s": 0.5,
+        "jitter_s": 0.1,
+        "write_prob": 0.1
+      }
+    },
+    {
+      "name": "SCAN_RO",
+      "start_first": false,
+      "kwargs": {
+        "start_addr": 0,
+        "end_addr": 200,
+        "block_size": 10,
+        "delay_s": 0.01
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-025024_20260128-025022_baseline_ro_scan.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.pcapng",
+    "pcap_main_sha256": "bd7905b31e29af26c9efb6deaba3285f960afac36a7229843e9de17fdab0d031",
+    "capture_pid": 43928
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 1463.59375,
+    "pcap_total_kb": 1463.59375,
+    "capture_pid": 43928,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.pcapng\nŁącznie pakietów Modbus: 8630\nCzas trwania śladu: 60.168 s\nŚrednio pakietów/s: 143.4\nFC3: 8606 | FC6: 24 | FC16: 0\nFC6 distinct addrs: 0 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=64.1B | std=8.5B\nFlows: 6 | top3: [('127.0.0.1:57016 -> 127.0.0.1:502', 3885), ('127.0.0.1:502 -> 127.0.0.1:57016', 3885), ('127.0.0.1:57015 -> 127.0.0.1:502', 287)]\nPorts seen (dst): {'502': 4315, '57016': 3885, '57015': 287, '57014': 143}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.win5s.csv (rows=13)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-025024_20260128-025022_baseline_ro_scan_00001_20260128025024.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769565087.654751
+}

@@ -1,0 +1,89 @@
+{
+  "run_id": "20260128-150641_mass_overwrite_only_seed70536",
+  "scenario_id": "mass_overwrite_only",
+  "label": "mass_overwrite_only_run9_seed70536_20260128-150641",
+  "seed": 70536,
+  "duration_s": 60.0,
+  "warmup_s": 2.0,
+  "cooldown_s": 1.0,
+  "timestamp_start_epoch": 1769609201.6677754,
+  "platform": {
+    "python": "3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)]",
+    "os": "Windows-10-10.0.19045-SP0"
+  },
+  "cfg": {
+    "plc_host": "127.0.0.1",
+    "plc_port": 502,
+    "unit_id": 1,
+    "heartbeat_register": 0,
+    "marker_register": 10,
+    "safe_write_register": 2,
+    "safe_write_min": 0,
+    "safe_write_max": 1000,
+    "proxy_enabled": false,
+    "proxy_host": "127.0.0.1",
+    "proxy_port": 1502,
+    "capture": {
+      "enabled": true,
+      "interface": "Adapter for loopback traffic capture",
+      "bpf": "tcp port 502 or tcp port 1502",
+      "ring_size_mb": 100,
+      "label_prefix": ""
+    }
+  },
+  "tasks": [
+    {
+      "name": "MASS_OVERWRITE_FC16",
+      "start_first": false,
+      "kwargs": {
+        "target_registers": [
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "chunk_size": 10,
+        "workers": 3,
+        "qps_per_worker": 5.0,
+        "min_value": 0,
+        "max_value": 1000
+      }
+    }
+  ],
+  "capture": {
+    "enabled": true,
+    "interface": "Adapter for loopback traffic capture",
+    "bpf": "tcp port 502 or tcp port 1502",
+    "ring_size_mb": 100,
+    "label_prefix": "",
+    "pcap_hint": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536.pcapng",
+    "pcap_files": [
+      "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.pcapng"
+    ],
+    "pcap_main": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.pcapng",
+    "pcap_main_sha256": "f960c3eb1333e8153441c96ebe750cbe09a3c1dec05dd8fc04a4de364d4b8180",
+    "capture_pid": 48388
+  },
+  "result": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "capture_ok": true,
+    "pcap_ok": true,
+    "pcap_size_kb": 303.0625,
+    "pcap_total_kb": 303.0625,
+    "capture_pid": 48388,
+    "features_ok": true,
+    "features_window_s": 5.0,
+    "features_stdout_tail": "\n=== cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.pcapng ===\nŚcieżka: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.pcapng\nŁącznie pakietów Modbus: 1756\nCzas trwania śladu: 60.094 s\nŚrednio pakietów/s: 29.2\nFC3: 0 | FC6: 0 | FC16: 1756\nFC6 distinct addrs: 0 | FC6 entropy: 0.000 bit\nFC16 distinct addrs: 0 | FC16 entropy: 0.000 bit\nFC16 qty mean=0.00 std=0.00 max=0\nFrame len mean=66.5B | std=10.5B\nFlows: 6 | top3: [('127.0.0.1:62120 -> 127.0.0.1:502', 293), ('127.0.0.1:502 -> 127.0.0.1:62120', 293), ('127.0.0.1:62119 -> 127.0.0.1:502', 293)]\nPorts seen (dst): {'502': 878, '62120': 293, '62118': 292, '62119': 293}\n[OK] windows report: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.win5s.csv.report.json\n[OK] windows saved: C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.win5s.csv (rows=13)\n\n",
+    "windows_csv": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.win5s.csv",
+    "windows_report": "C:\\Users\\szymt\\OneDrive\\Dokumenty\\GitHub\\Praca_inzynierska\\capture\\pcap\\features\\cap-20260128-150643_20260128-150641_mass_overwrite_only_seed70536_00001_20260128150643.win5s.csv.report.json"
+  },
+  "timestamp_end_epoch": 1769609266.4854913
+}

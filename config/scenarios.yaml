@@ -16,6 +16,7 @@ scenarios:
 
   - id: baseline_ro_scan
     label: "Baseline + READ-ONLY scan"
+    duration_s: 60
     tasks:
       - kind: HMI
         params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
@@ -26,6 +27,7 @@ scenarios:
 
   - id: baseline_write_inj
     label: "Baseline + WRITE injection"
+    duration_s: 60
     tasks:
       - kind: HMI
         params: { base_address: 0, count: 10, period_s: 0.2, jitter_s: 0.05 }
