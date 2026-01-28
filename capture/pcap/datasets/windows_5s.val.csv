@@ -1,0 +1,1 @@
+win_index,t_start,t_end,n_pkts,pkts_per_s,fc3,fc6,fc16,n_flows,top_flow_share,fc6_addr_entropy,fc6_addr_distinct,fc16_addr_entropy,fc16_addr_distinct,fc16_qty_mean,fc16_qty_std,fc16_qty_max,frame_len_mean,frame_len_std,run_id,scenario_id,y_multiclass,is_anomaly
