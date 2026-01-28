@@ -1,0 +1,29 @@
+{
+  "model": "IsolationForest",
+  "scaler": "RobustScaler",
+  "train_rows": 162,
+  "val_rows": 31,
+  "test_rows": 73,
+  "features": 16,
+  "threshold": {
+    "quantile": 0.995,
+    "value": 0.21601939306444365
+  },
+  "confusion": {
+    "tp": 8,
+    "tn": 41,
+    "fp": 0,
+    "fn": 24
+  },
+  "metrics": {
+    "precision": 1.0,
+    "recall": 0.25,
+    "fpr": 0.0
+  },
+  "params": {
+    "n_estimators": 200,
+    "max_samples": "auto",
+    "contamination": "auto",
+    "random_state": 42
+  }
+}

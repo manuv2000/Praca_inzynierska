@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "train_rows_total": 416,
+    "val_rows_total": 93,
+    "test_rows_total": 73,
+    "train_baseline_rows": 162,
+    "val_baseline_rows": 31
+  },
+  "scenario_dist_test": {
+    "baseline": 41,
+    "baseline_ro_scan": 11,
+    "baseline_write_inj": 11,
+    "baseline_proxy_spoof": 10
+  },
+  "feature_count": 16,
+  "nan_report": {
+    "train_nan_cells": 0,
+    "val_nan_cells": 0,
+    "test_nan_cells": 0
+  },
+  "source_files": {
+    "train": "data_prepared\\unsupervised\\raw\\windows_5s.train.csv",
+    "val": "data_prepared\\unsupervised\\raw\\windows_5s.val.csv",
+    "test": "data_prepared\\unsupervised\\raw\\windows_5s.test.csv"
+  }
+}
