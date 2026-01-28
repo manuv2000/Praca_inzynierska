@@ -42,7 +42,7 @@ def main() -> int:
     ap.add_argument("--if_dir", default=str(DEFAULT_IF_DIR), help="żeby użyć tego samego scaler'a")
     ap.add_argument("--out_dir", default=str(DEFAULT_OUT_DIR))
     ap.add_argument("--quantile", type=float, default=0.99)
-    ap.add_argument("--n_neighbors", type=int, default=20)
+    ap.add_argument("--n_neighbors", type=int, default=8)
     args = ap.parse_args()
 
     in_dir = Path(args.in_dir)
