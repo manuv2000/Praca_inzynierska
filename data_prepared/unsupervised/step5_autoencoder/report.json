@@ -1,0 +1,20 @@
+{
+  "model": "Autoencoder",
+  "epochs": 40,
+  "features": 16,
+  "threshold": {
+    "quantile": 0.99,
+    "value": 0.439850777387619
+  },
+  "confusion": {
+    "tp": 32,
+    "tn": 41,
+    "fp": 0,
+    "fn": 0
+  },
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0
+  }
+}
