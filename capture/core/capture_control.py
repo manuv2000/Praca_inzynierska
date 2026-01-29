@@ -37,6 +37,7 @@ def start_capture(
     bpf: str = BPF_FILTER,
     ring_size_mb: int = 100,
     label: Optional[str] = None,
+    rotate_s: int = 5,
 ) -> Path:
     PCAP_DIR.mkdir(parents=True, exist_ok=True)
     ts = dt.datetime.now().strftime("cap-%Y%m%d-%H%M%S")
@@ -53,7 +54,7 @@ def start_capture(
         dumpcap_exe,
         "-i", interface,
         "-f", bpf,
-        "-b", f"filesize:{int(ring_size_mb) * 1024}",
+        "-b", f"duration:{int(rotate_s)}",   # <<< KLUCZ
         "-b", "files:50",
         "-w", str(pcap_path),
     ]

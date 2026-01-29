@@ -3,18 +3,18 @@
   "epochs": 40,
   "features": 16,
   "threshold": {
-    "quantile": 0.99,
-    "value": 0.439850777387619
+    "quantile": 0.95,
+    "value": 0.3461512327194214
   },
   "confusion": {
     "tp": 32,
-    "tn": 41,
-    "fp": 0,
+    "tn": 38,
+    "fp": 3,
     "fn": 0
   },
   "metrics": {
-    "precision": 1.0,
+    "precision": 0.9142857142857143,
     "recall": 1.0,
-    "fpr": 0.0
+    "fpr": 0.07317073170731707
   }
 }

@@ -5,8 +5,8 @@
   "test_rows": 73,
   "features": 16,
   "threshold": {
-    "quantile": 0.99,
-    "value": 4187968235.7317495
+    "quantile": 0.95,
+    "value": 4985676470.918748
   },
   "confusion": {
     "tp": 11,
@@ -20,6 +20,6 @@
     "fpr": 0.024390243902439025
   },
   "params": {
-    "n_neighbors": 5
+    "n_neighbors": 7
   }
 }

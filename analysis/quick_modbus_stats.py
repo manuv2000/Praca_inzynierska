@@ -6,6 +6,7 @@ import csv
 import json
 import math
 import shutil
+import statistics
 import subprocess
 import sys
 from dataclasses import dataclass, replace
@@ -803,7 +804,7 @@ def main(argv: List[str]) -> None:
                 rep_dir = Path(args.export_report)
                 rep_dir.mkdir(parents=True, exist_ok=True)
                 rep_path = Path(str(out) + ".report.json")
-                report = build_report(pcap, feats, wins)
+                report = build_windows_report(pcap, feats, wins)
                 rep_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
                 print(f"[OK] report saved: {rep_path}")
 
