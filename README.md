@@ -177,3 +177,15 @@ Planned consumers:
 | API skeleton                               | ✅ Ready     |
 | Node-RED,Telegraf and InfluxDB integration | ⏳ Next step |
 | Unsupervised ML model                      | ⏳ Planned   |
+
+## Authors / Contributions
+
+This project was developed as part of an engineering thesis.
+
+Main contributions were made by me under two GitHub accounts:
+- https://github.com/manuv2000
+- https://github.com/PaulCodingPractices
+
+Reason: work was developed across different environments/devices.
+
+All contributions listed under both accounts belong to the same author.
